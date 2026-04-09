@@ -1,0 +1,25 @@
+services:
+  traefik:
+    image: traefik:v3.6.2
+    command:
+      - "--api.insecure=true"
+      - "--api.dashboard=true"
+      - "--providers.docker=true"
+      - "--providers.docker.endpoint=unix:///var/run/docker.sock"
+      - "--providers.docker.exposedbydefault=false"
+      - "--providers.docker.network=webproxy"
+      - "--entrypoints.web.address=:80"
+    ports:
+      - "80:80"
+      - "8888:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - webproxy
+    restart: unless-stopped
+
+networks:
+  webproxy:
+    name: webproxy
+    driver: bridge
+
